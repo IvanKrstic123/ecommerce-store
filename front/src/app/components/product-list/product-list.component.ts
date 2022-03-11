@@ -11,16 +11,30 @@ import { ProductService } from './../../services/product.service';
 export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
-  currentCategoryId: number = 0;
+  currentCategoryId: number = 1;
+  previousCategoryId: number = 1;
   searchMode: boolean = false;
 
+  // pagination properties
+  thePageNumber: number = 1;
+  thePageSize: number = 10;
+  theTotalElements: number = 0;
+
+  previousKeyword: string = "";
+
   constructor(private productListService: ProductService,
-              private route: ActivatedRoute) { }
+    private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(() => {
       this.listProducts();
     });
+  }
+
+  updatePageSize(event: any) {
+    this.thePageSize = event.target.value;
+    this.thePageNumber = 1;
+    this.listProducts(); // refresh page view
   }
 
   // list all products by mode
@@ -38,12 +52,21 @@ export class ProductListComponent implements OnInit {
   handleSeachProducts() {
     const theKeyword: string = this.route.snapshot.paramMap.get('keyword')!;
 
+    // reset pagination if search keyword is changed
+    if (this.previousKeyword != theKeyword) {
+      this.thePageNumber = 1;
+    }
+    // keep track of previous category
+    this.previousKeyword = theKeyword;
+
+    console.log(`keyword: ${theKeyword}. thePageNumber ${this.thePageNumber}`);
+
+
     // search for the products using keyword
-    this.productListService.searchProducts(theKeyword).subscribe(
-      data => {
-        this.products = data;
-      }
-    );
+    this.productListService.seachProductsByNamePaginate(this.thePageNumber - 1,
+                                                   this.thePageSize,
+                                                   theKeyword)
+    .subscribe(this.procesResult());
   }
 
   handleListProducts() {
@@ -60,10 +83,26 @@ export class ProductListComponent implements OnInit {
       this.currentCategoryId = 1;
     }
 
-    this.productListService.getProductList(this.currentCategoryId).subscribe(
-      data => {
-        this.products = data;
-      }
-    );
+    // reset pagination if category is changed
+    if (this.previousCategoryId != this.currentCategoryId) {
+      this.thePageNumber = 1;
+    }
+
+    // keep track of previous category selected
+    this.previousCategoryId = this.currentCategoryId;
+
+    this.productListService.getProductListPaginate(this.thePageNumber - 1,
+                                                   this.thePageSize,
+                                                   this.currentCategoryId)
+    .subscribe(this.procesResult());
+  }
+
+  procesResult() {
+    return (data: any) => {
+      this.products = data._embedded.products;
+      this.thePageNumber = data.page.number + 1;
+      this.thePageSize = data.page.size;
+      this.theTotalElements = data.page.totalElements;
+    }
   }
 }

@@ -6,43 +6,51 @@
         <div *ngFor="let product of products" class="col-sm-6 col-md-3">
           <div class="product-box">
             <a routerLink="/products/{{ product.id }}">
-              <img src="{{ product.imageUrl }}" class="img-responsive">
+              <img src="{{ product.imageUrl }}" class="img-responsive" />
             </a>
             <a routerLink="/products/{{ product.id }}">
               <h1>{{ product.name }}</h1>
             </a>
-            <h2>{{ product.description }} </h2>
-            <div class="price">{{ product.unitPrice | currency: 'USD' }}</div>
+            <h2>{{ product.description }}</h2>
+            <div class="price">{{ product.unitPrice | currency: "USD" }}</div>
             <a href="#" class="primary-btn">Add to cart</a>
           </div>
         </div>
 
         <!--IF PRODUCTS NOT FOUND DISPLAY MESSAGE-->
-        <div *ngIf="products?.length == 0" class="alert alert-warning  col-md-12" role="alert">
+        <div
+          *ngIf="products?.length == 0"
+          class="alert alert-warning col-md-12"
+          role="alert"
+        >
           No products found!
         </div>
       </div>
 
       <div class="footer-pagination">
         <div class="row">
-          <div class="col-md-6"></div>
-          <div class="col-md-3">
-            <div class="items">
-              <label>Item per page</label> <select>
-                <option>10</option>
-                <option>20</option>
-                <option>30</option>
-                <option>40</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-md-2">
-            <div class="number">1 - 10 of 100</div>
-          </div>
-          <div class="col-md-1">
-            <div class="arrows">
-              <a href="#"><i class="fa fa-angle-left" aria-hidden="true"></i></a>
-              <a href="#"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+          <div class="col-md-12">
+            <div class="row">
+              <div class="col-md-9" style="padding-left: 30%">
+                <ngb-pagination
+                  [(page)]="thePageNumber"
+                  [pageSize]="thePageSize"
+                  [collectionSize]="theTotalElements"
+                  [maxSize]="3"
+                  [boundaryLinks]="true"
+                  (pageChange)="listProducts()"
+                >
+                </ngb-pagination>
+              </div>
+              <div class="col-md-3" style="text-align: right;">
+                <span class="mr-2">Page Size</span>
+                <select (change)="updatePageSize($event)">
+                  <option selected="true">10</option>
+                  <option>20</option>
+                  <option>30</option>
+                  <option>50</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -51,4 +59,4 @@
   </div>
 </div>
 
-  <!-- END MAIN CONTENT-->
+<!-- END MAIN CONTENT-->

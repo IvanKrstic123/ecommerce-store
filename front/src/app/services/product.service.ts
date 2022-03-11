@@ -22,20 +22,35 @@ export class ProductService {
     return this.getProducts(searchUrl);
   }
 
-  // search product categories
-  getProductCategories(): Observable<ProductCategory[]> {
+  getProductListPaginate(page: number, pageSize: number, id: number): Observable<GetResponseProducts> {
+
+    // build URL based on category id
+    const searchUrl = `${this.baseUrl}/search/findByCategoryId` +
+                      `?id=${id}` +
+                      `&page=${page}` +
+                      `&size=${pageSize}`;
+
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
+  }
+
+  // search products by name
+  seachProductsByNamePaginate(page: number, pageSize: number, keyword: string): Observable<GetResponseProducts> {
+
+    // build URL based on category id
+    const searchUrl = `${this.baseUrl}/search/findByNameContaining` +
+                      `?name=${keyword}` +
+                      `&page=${page}` +
+                      `&size=${pageSize}`;
+
+    return this.httpClient.get<GetResponseProducts>(searchUrl);
+  }
+
+   // search products by category
+   getProductCategories(): Observable<ProductCategory[]> {
 
     return this.httpClient.get<GetResponseProductCategory>(this.categoryUrl).pipe(
       map(response => response._embedded.productCategory)
     );
-  }
-
-  // search products by name
-  searchProducts(keyword: string): Observable<Product[]> {
-    // build URL based on category id
-    const searchUrl = `${this.baseUrl}/search/findByNameContaining?name=${keyword}`
-
-    return this.getProducts(searchUrl);
   }
 
   getProduct(id: number): Observable<Product> {
@@ -45,20 +60,32 @@ export class ProductService {
   }
 
   private getProducts(searchUrl: string): Observable<Product[]> {
-    return this.httpClient.get<GetResponseProduct>(searchUrl).pipe(
+    return this.httpClient.get<GetResponseProducts>(searchUrl).pipe(
       map(response => response._embedded.products)
     );
   }
 }
 
-interface GetResponseProduct {
+interface GetResponseProducts {
   _embedded: {
     products: Product[];
+    page: {
+      size: number,
+      totalElements: number,
+      totalPages: number,
+      number: number
+    }
   }
 }
 
 interface GetResponseProductCategory {
   _embedded: {
     productCategory: ProductCategory[];
+  }
+  page: {
+    size: number,
+    totalElements: number,
+    totalPages: number,
+    number: number
   }
 }
