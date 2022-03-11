@@ -1,6 +1,22 @@
 <div class="page-wrapper">
   <!--MENU COMPONENT-->
-  <app-product-category-menu></app-product-category-menu>
+
+  <aside class="menu-sidebar d-none d-lg-block">
+    <div class="logo">
+      <a routerLink="/products">
+        <img
+          src="assets/images/logo.png"
+          alt="luv2shop"
+          class="img-responsive"
+        />
+      </a>
+    </div>
+
+    <app-product-category-menu></app-product-category-menu>
+
+  </aside>
+
+
 
   <!-- PAGE CONTAINER-->
   <div class="page-container">
