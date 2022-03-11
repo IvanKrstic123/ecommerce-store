@@ -9,4 +9,5 @@ export class Product {
   unitsInStock: number = 0;
   dateCreated: string = "";
   lastUpdated: string = "";
+  
 }
