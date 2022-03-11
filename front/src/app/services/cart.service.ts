@@ -53,9 +53,29 @@ export class CartService {
     // publish the new values for subscribers...
     this.totalPrice.next(totalPriceValue);
     this.totalQuantity.next(totalQuantityValue);
+  }
 
-    this.cartItems.forEach(cartItem => {
-      console.log(cartItem);
-    })
+  decrementQuantity(cartItem: CartItem) {
+    cartItem.quantity--;
+
+    if (cartItem.quantity === 0) {
+      this.remove(cartItem);
+    }
+    else {
+      this.computeCartTotals();
+    }
+  }
+
+  // removes cart item
+  remove(cartItem: CartItem) {
+
+    // get index of specified item in array
+    const itemIndex = this.cartItems.findIndex(tempCartItem => cartItem.id === tempCartItem.id);
+
+    if (itemIndex > -1) {
+      this.cartItems.splice(itemIndex, 1);
+
+      this.computeCartTotals();
+    }
   }
 }
