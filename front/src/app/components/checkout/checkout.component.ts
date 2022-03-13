@@ -6,6 +6,7 @@ import { Country } from 'src/app/common/country';
 import { State } from 'src/app/common/state';
 import { FormService } from './../../services/form.service';
 import { WhiteSpaceValidator } from './../../validators/white-space-validator';
+import { CartService } from './../../services/cart.service';
 
 @Component({
   selector: 'app-checkout',
@@ -27,7 +28,8 @@ export class CheckoutComponent implements OnInit {
   shippingAddressStates: State[] = [];
   billingAddressStates: State[] = [];
 
-  constructor(private formService: FormService) { }
+  constructor(private formService: FormService,
+              private cartService: CartService) { }
 
   ngOnInit(): void {
     this.checkoutFormGroup = new FormGroup({
@@ -132,6 +134,8 @@ export class CheckoutComponent implements OnInit {
     this.formService.getCountries().subscribe(
       data => this.countries = data
     );
+
+    this.reviewCartDetails();
   }
 
   // customer form group getters
@@ -229,6 +233,17 @@ export class CheckoutComponent implements OnInit {
         // display first state on dropdown
         formGroup?.get('state')?.setValue(data[0]);
       }
+    );
+  }
+
+  // listening behavior subject - returning buffered last missed event
+  reviewCartDetails() {
+    this.cartService.totalQuantity.subscribe(
+      totalQuantity => this.totalQuantity = totalQuantity
+    );
+
+    this.cartService.totalPrice.subscribe(
+      totalPrice => this.totalPrice = totalPrice
     );
   }
 }

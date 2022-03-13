@@ -466,7 +466,7 @@
         <div formGroupName="creditCard" class="form-area">
           <h3>Review Order</h3>
           <p>Total Quantity: {{ totalQuantity }}</p>
-          <p>Shipping: FREE</p>
+          <p *ngIf="totalPrice > 20">Shipping: FREE</p>
           <p>Total price: {{ totalPrice | currency: "USD" }}</p>
         </div>
         <div class="text-center">

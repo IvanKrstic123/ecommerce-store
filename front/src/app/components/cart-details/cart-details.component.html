@@ -48,8 +48,7 @@
           <td colspan="2"></td>
           <td>
             <b>Total Quantity: {{ totalQuantity }}</b>
-            <p>Shipping FREE</p>
-            <b>Total Price: {{ totalPrice | currency: 'USD'}}</b><br />
+            <p *ngIf="totalPrice > 20">Shipping FREE</p>
             <a routerLink="/checkout" class="primary-btn">Checkout</a>
           </td>
         </tr>
